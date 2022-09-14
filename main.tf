@@ -41,7 +41,7 @@ resource "azurerm_ssh_public_key" "ssh_key3" {
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
   public_key          = file("ssh/ssh3.pub") 
-}
+} 
 
 ## Creation SubNet
 resource "azurerm_subnet" "subnet_gateway" {
