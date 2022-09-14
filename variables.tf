@@ -19,7 +19,7 @@ variable "adminmail" {
   default = "simplon.luna@gmail.com"
 }
 
-variable "subdomain" {
+variable "subdomain-prefix" {
   default = "votingapp-b4g4ld"
 }
 
