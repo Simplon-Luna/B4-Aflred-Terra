@@ -2,8 +2,8 @@
 
 for i in {1..5}
 do
-    curl -F 'vote=Dogs' http://votingapp-testalfred.westus.cloudapp.azure.com/
-    curl -F 'vote=Cats' http://votingapp-testalfred.westus.cloudapp.azure.com/
+    curl -F 'vote=Dogs' http://votingapp-b4g4ld-rg.eastus.cloudapp.azure.com/
+    curl -F 'vote=Cats' http://votingapp-b4g4ld-rg.eastus.cloudapp.azure.com/
 
 done
 
