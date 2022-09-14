@@ -19,11 +19,28 @@ resource "azurerm_virtual_network" "network" {
 }
 
 ## Creation SSH
-resource "azurerm_ssh_public_key" "ssh_key" {
+    # SSH Luna
+resource "azurerm_ssh_public_key" "ssh_key1" {
   name                = "ssh_key_admin"
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
-  public_key          = file("~/.ssh/id_rsa.pub") 
+  public_key          = file("~/.ssh/ssh.pub") 
+}
+
+    # SSH Dunvael
+resource "azurerm_ssh_public_key" "ssh_key2" {
+  name                = "ssh_key_usr1"
+  resource_group_name = azurerm_resource_group.rg.name
+  location            = azurerm_resource_group.rg.location
+  public_key          = file("~/.ssh/ssh2.pub") 
+}
+
+    # SSH Yuta
+resource "azurerm_ssh_public_key" "ssh_key3" {
+  name                = "ssh_key_usr2"
+  resource_group_name = azurerm_resource_group.rg.name
+  location            = azurerm_resource_group.rg.location
+  public_key          = file("~/.ssh/ssh3.pub") 
 }
 
 ## Creation SubNet
