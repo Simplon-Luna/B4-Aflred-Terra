@@ -1,4 +1,0 @@
-curl -F 'vote=Cats' http://votingapp.eastus.cloudapp.azure.com/
-
-boucle de 5 avec sleep de 0.5s
-
