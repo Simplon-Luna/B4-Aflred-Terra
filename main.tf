@@ -102,7 +102,7 @@ resource "azurerm_application_gateway" "gateway" {
  }
 
  http_listener {
-   name                           = "listener"
+   name                           = "${var.prefix}listener"
    frontend_ip_configuration_name = "front-ip"
    frontend_port_name             = "http"
    protocol                       = "Http"
@@ -111,7 +111,7 @@ resource "azurerm_application_gateway" "gateway" {
  request_routing_rule {
    name                       = "rule-1"
    rule_type                  = "Basic"
-   http_listener_name         = "listener"
+   http_listener_name         = "${var.prefix}listener"
    backend_address_pool_name  = "backend_pool"
    backend_http_settings_name = "http-settings"
    priority                   = 100
