@@ -29,7 +29,7 @@ data "cloudinit_config" "cloud-init" {
 
   part {
     content_type = "text/cloud-config"
-    content      = templatefile("../cloud-init.yml", {REDIS_HOST = azurerm_redis_cache.redis.hostname,
+    content      = templatefile("cloud-init.yml", {REDIS_HOST = azurerm_redis_cache.redis.hostname,
                                                       REDIS_PWD = azurerm_redis_cache.redis.primary_access_key})
   }
 }
