@@ -103,7 +103,7 @@ resource "azurerm_application_gateway" "gateway" {
 
  http_listener {
    name                           = "${var.prefix}listener"
-   frontend_ip_configuration_name = "front-ip"
+   frontend_ip_configuration_name = "${var.prefix}front-ip"
    frontend_port_name             = "http"
    protocol                       = "Http"
  }
