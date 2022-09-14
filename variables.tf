@@ -12,7 +12,7 @@ variable "prefix" {
 }
 
 variable "ssh_keys" {
-  default = "/.ssh/ssh.pub"
+  default = "/ssh/ssh.pub"
 }
 
 variable "adminmail" {
