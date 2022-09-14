@@ -1,8 +1,6 @@
 #!/bin/bash
 
-for i {1..3}
-
-do
+for i {1..3}; do
 
     curl --silent --output /dev/null -F 'vote=Cats' http://votingapp-b4g4ld-rg.eastus.cloudapp.azure.com
     sleep 0.5
@@ -11,4 +9,4 @@ do
     curl --silent --output /dev/null -F 'vote=Dogs' http://votingapp-b4g4ld-rg.eastus.cloudapp.azure.com
     sleep 0.5
 
-fi
+done
