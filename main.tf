@@ -158,7 +158,7 @@ resource "azurerm_subnet_nat_gateway_association" "gw_a" {
 ## Bastion
     # Creation Bastion Subnet
 resource "azurerm_subnet" "subnet_bastion" {
-  name                 = "${var.prefix}AzureBastionSubnet"
+  name                 = "AzureBastionSubnet"
   resource_group_name  = azurerm_resource_group.rg.name
   virtual_network_name = azurerm_virtual_network.network.name
   address_prefixes     = ["10.0.0.0/24"]
