@@ -1,9 +1,22 @@
 variable "rg" {
-  default = "S1"
+  default = "rg"
 }
 
 variable "location" {
-  default = "westus"
+  default = "eastus"
+}
+
+variable "prefix" {
+  default ="b4g4ld"
+  description =" ça n'as pas d'importance"
+}
+
+variable "ssh_keys" {
+  default = "/.ssh/ssh.pub"
+}
+
+variable "adminmail" {
+  default = "simplon.luna@gmail.com"
 }
 
 variable "subdomain" {
