@@ -2,8 +2,11 @@
 
 for i in {1..5}
 do
-
-    curl --silent --output /dev/null -F 'vote=Cats' http://votingapp-b4g4ld-rg.eastus.cloudapp.azure.com
-    sleep 0.5
+    curl -F 'vote=Dogs' http://votingapp-testalfred.westus.cloudapp.azure.com/
+    curl -F 'vote=Cats' http://votingapp-testalfred.westus.cloudapp.azure.com/
 
 done
+
+
+# curl --silent --output /dev/null -F 'vote=Cats' http://votingapp-b4g4ld-rg.eastus.cloudapp.azure.com
+#    sleep 0.5
