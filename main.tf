@@ -63,58 +63,58 @@ resource "azurerm_public_ip" "public_ip_gateway" {
 
 ## Creation & Config AppGateway
 resource "azurerm_application_gateway" "gateway" {
- name                = "${var.prefix}gateway"
- resource_group_name = azurerm_resource_group.rg.name
- location            = azurerm_resource_group.rg.location
+  name                = "${var.prefix}gateway"
+  resource_group_name = azurerm_resource_group.rg.name
+  location            = azurerm_resource_group.rg.location
 
- sku {
-   name     = "Standard_v2"
-   tier     = "Standard_v2"
-   capacity = 2
+  sku {
+    name     = "Standard_v2"
+    tier     = "Standard_v2"
+    capacity = 2
  }
 
- gateway_ip_configuration {
-   name      = "${var.prefix}ip-configuration"
-   subnet_id = azurerm_subnet.subnet_gateway.id
+  gateway_ip_configuration {
+    name      = "${var.prefix}ip-configuration"
+    subnet_id = azurerm_subnet.subnet_gateway.id
  }
 
- frontend_port {
-   name = "http"
-   port = 80
+  frontend_port {
+    name = "http"
+    port = 80
  }
 
- frontend_ip_configuration {
-   name                 = "${var.prefix}front-ip"
-   public_ip_address_id = azurerm_public_ip.public_ip_gateway.id
+  frontend_ip_configuration {
+    name                 = "${var.prefix}front-ip"
+    public_ip_address_id = azurerm_public_ip.public_ip_gateway.id
  }
 
- backend_address_pool {
-   name = "backend_pool"
+  backend_address_pool {
+    name = "backend_pool"
  }
 
- backend_http_settings {
-   name                  = "http-settings"
-   cookie_based_affinity = "Disabled"
-   path                  = "/"
-   port                  = 80
-   protocol              = "Http"
-   request_timeout       = 10
+  backend_http_settings {
+    name                  = "http-settings"
+    cookie_based_affinity = "Disabled"
+    path                  = "/"
+    port                  = 80
+    protocol              = "Http"
+    request_timeout       = 10
  }
 
- http_listener {
-   name                           = "${var.prefix}listener"
-   frontend_ip_configuration_name = "${var.prefix}front-ip"
-   frontend_port_name             = "http"
-   protocol                       = "Http"
+  http_listener {
+    name                           = "${var.prefix}listener"
+    frontend_ip_configuration_name = "${var.prefix}front-ip"
+    frontend_port_name             = "http"
+    protocol                       = "Http"
  }
 
- request_routing_rule {
-   name                       = "rule-1"
-   rule_type                  = "Basic"
-   http_listener_name         = "${var.prefix}listener"
-   backend_address_pool_name  = "backend_pool"
-   backend_http_settings_name = "http-settings"
-   priority                   = 100
+  request_routing_rule {
+    name                       = "rule-1"
+    rule_type                  = "Basic"
+    http_listener_name         = "${var.prefix}listener"
+    backend_address_pool_name  = "backend_pool"
+    backend_http_settings_name = "http-settings"
+    priority                   = 100
  }
 }
 
@@ -236,37 +236,6 @@ resource "azurerm_network_interface_security_group_association" "assoc-nic-nsg-a
   network_security_group_id = azurerm_network_security_group.nsg_app.id
 }
 
-    # Creation VM App
-resource "azurerm_linux_virtual_machine" "vm_app" {
-  name                  = "${var.prefix}vm-app"
-  location              = azurerm_resource_group.rg.location
-  resource_group_name   = azurerm_resource_group.rg.name
-  network_interface_ids = [azurerm_network_interface.nic_app.id]
-  size                  = "Standard_DS1_v2"
-
-  os_disk {
-    name                 = "${var.prefix}disk_app"
-    caching              = "ReadWrite"
-    storage_account_type = "Premium_LRS"
-  }
-
-  source_image_reference {
-    publisher = "Debian"
-    offer     = "debian-11"
-    sku       = "11"
-    version   = "latest"
-  }
-
-  custom_data                     = data.cloudinit_config.cloud-init.rendered
-  admin_username                  = "wonderwomen"
-  disable_password_authentication = true
-
-  admin_ssh_key {
-    username   = "wonderwomen"
-    public_key = azurerm_ssh_public_key.ssh_key1.public_key
-  }
-}
-
 ## Redis
     # Creation Redis
 resource "azurerm_redis_cache" "redis" {
@@ -290,7 +259,104 @@ resource "azurerm_redis_firewall_rule" "vm_app" {
   end_ip              = azurerm_public_ip.public_ip_nat.ip_address
 }
 
-## Monitoring
+## Creation Storage Account
+resource "azurerm_storage_account" "stor_acc" {
+  name                     = "${var.prefix}storageacc"
+  resource_group_name      = azurerm_resource_group.rg.name
+  location                 = azurerm_resource_group.rg.location
+  account_tier             = "Standard"
+  account_replication_type = "LRS"
+  tags = {
+    environment = "staging"
+  }
+}
+
+## Creation VM Scaleset
+resource "azurerm_virtual_machine_scale_set" "scaleset" {
+  name                = "${var.prefix}mytestscaleset1"
+  resource_group_name = azurerm_resource_group.rg.name
+  location            = azurerm_resource_group.rg.location
+  upgrade_policy_mode = "Automatic"
+
+  sku {
+    name     = "Standard_F2"
+    tier     = "Standard"
+    capacity = 2
+  }
+
+  os_profile {
+    computer_name_prefix = "testvm"
+    admin_username       = "myadmin"
+  }
+
+  os_profile_linux_config {
+    disable_password_authentication = true
+
+    admin_ssh_key {
+    username   = "wonderwomen"
+    public_key = azurerm_ssh_public_key.ssh_key1.public_key
+  }
+  }
+
+  network_profile {
+    name    = "TestNetworkProfile"
+    primary = true
+
+    ip_configuration {
+      name      = "TestIPConfiguration"
+      primary   = true
+      subnet_id = azurerm_subnet.subnet_app.id
+    }
+  }
+
+  storage_profile_os_disk {
+    name           = "osDiskProfile"
+    caching        = "ReadWrite"
+    create_option  = "FromImage"
+    vhd_containers = ["${azurerm_storage_account.st_account.primary_blob_endpoint}${azurerm_storage_container.st_container.name}"]
+  }
+
+  storage_profile_image_reference {
+    publisher = "Canonical"
+    offer     = "UbuntuServer"
+    sku       = "16.04-LTS"
+    version   = "latest"
+  }
+}
+
+#*# ## Creation VM App
+#*# resource "azurerm_linux_virtual_machine" "vm_app" {
+#*#   name                  = "${var.prefix}vm-app"
+#*#   location              = azurerm_resource_group.rg.location
+#*#   resource_group_name   = azurerm_resource_group.rg.name
+#*#   network_interface_ids = [azurerm_network_interface.nic_app.id]
+#*#   size                  = "Standard_DS1_v2"
+#*# 
+#*#   os_disk {
+#*#     name                 = "${var.prefix}disk_app"
+#*#     caching              = "ReadWrite"
+#*#     storage_account_type = "Premium_LRS"
+#*#   }
+#*# 
+#*#   source_image_reference {
+#*#     publisher = "Debian"
+#*#     offer     = "debian-11"
+#*#     sku       = "11"
+#*#     version   = "latest"
+#*#   }
+#*# 
+#*#   custom_data                     = data.cloudinit_config.cloud-init.rendered
+#*#   admin_username                  = "wonderwomen"
+#*#   disable_password_authentication = true
+#*#
+#*#  admin_ssh_key {
+#*#     username   = "wonderwomen"
+#*#     public_key = azurerm_ssh_public_key.ssh_key1.public_key
+#*#   }
+#*# }
+
+
+## ---- Monitoring ----
     # Creation Monitor Action Group
 resource "azurerm_monitor_action_group" "group-monitor" {
  resource_group_name = azurerm_resource_group.rg.name
