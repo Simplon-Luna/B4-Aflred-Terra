@@ -1,0 +1,2 @@
+curl -F 'vote=Cats' http://votingapp.eastus.cloudapp.azure.com/
+
