@@ -20,7 +20,7 @@ variable "adminmail" {
 }
 
 variable "subdomain" {
-  default = "votingapp-${var.prefix}"
+  default = "votingapp-b4g4ld"
 }
 
 data "cloudinit_config" "cloud-init" {
