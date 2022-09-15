@@ -271,60 +271,116 @@ resource "azurerm_storage_account" "stor_acc" {
   }
 }
 
-## Creation VM Scaleset
-resource "azurerm_virtual_machine_scale_set" "scaleset" {
-  name                = "${var.prefix}mytestscaleset1"
+## Creation & Setting VM Scale Set
+resource "azurerm_linux_virtual_machine_scale_set" "scalevmss" {
+  name                = "${var.prefix}exampleset"
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
-  upgrade_policy_mode = "Automatic"
+  upgrade_mode        = "Manual"
+  sku                 = "Standard_F2"
+  instances           = 2
+  admin_username      = "wonderwomen"
 
-  sku {
-    name     = "Standard_F2"
-    tier     = "Standard"
-    capacity = 2
-  }
-
-  os_profile {
-    computer_name_prefix = "testvm"
-    admin_username       = "wonderwomen"
-  }
-
-  os_profile_linux_config {
-    disable_password_authentication = true
-
-    admin_ssh_key {
+  admin_ssh_key {
     username   = "wonderwomen"
     public_key = azurerm_ssh_public_key.ssh_key1.public_key
   }
-  }
-
-  network_profile {
-    name    = "TestNetworkProfile"
+  network_interface {
+    name    = "${var.prefix}NetworkInterfaceProfile"
     primary = true
 
     ip_configuration {
-      name      = "TestIPConfiguration"
+      name      = "${var.prefix}IPConfiguration"
       primary   = true
       subnet_id = azurerm_subnet.subnet_app.id
     }
   }
-  
-  custom_data                     = data.cloudinit_config.cloud-init.rendered
-  admin_username                  = "wonderwomen"
-  disable_password_authentication = true
 
-  storage_profile_os_disk {
-    name           = "${var.prefix}disk_app"
-    caching        = "ReadWrite"
-    create_option  = "FromImage"
-#*#*    vhd_containers = ["${azurerm_storage_account.st_account.primary_blob_endpoint}${azurerm_storage_container.st_container.name}"]
+  os_disk {
+    caching              = "ReadWrite"
+    storage_account_type = "StandardSSD_LRS"
   }
 
-  storage_profile_image_reference {
+  source_image_reference {
     publisher = "Debian"
     offer     = "debian-11"
     sku       = "11"
     version   = "latest"
+  }
+
+  lifecycle {
+    ignore_changes = ["instances"]
+  }
+}
+
+resource "azurerm_monitor_autoscale_setting" "autoscaleset" {
+  name                = "${var.prefix}AutoscaleSetting"
+  resource_group_name = azurerm_resource_group.example.name
+  location            = azurerm_resource_group.example.location
+  target_resource_id  = azurerm_linux_virtual_machine_scale_set.example.id
+
+  profile {
+    name = "defaultProfile"
+
+    capacity {
+      default = 1
+      minimum = 1
+      maximum = 10
+    }
+
+    rule {
+      metric_trigger {
+        metric_name        = "Percentage CPU"
+        metric_resource_id = azurerm_linux_virtual_machine_scale_set.scalevmss.id
+        time_grain         = "PT1M"
+        statistic          = "Average"
+        time_window        = "PT5M"
+        time_aggregation   = "Average"
+        operator           = "GreaterThan"
+        threshold          = 75
+        metric_namespace   = "microsoft.compute/virtualmachinescalesets"
+        dimensions {
+          name     = "AppName"
+          operator = "Equals"
+          values   = ["App1"]
+        }
+      }
+
+      scale_action {
+        direction = "Increase"
+        type      = "ChangeCount"
+        value     = "1"
+        cooldown  = "PT1M"
+      }
+    }
+
+    rule {
+      metric_trigger {
+        metric_name        = "Percentage CPU"
+        metric_resource_id = azurerm_linux_virtual_machine_scale_set.scalevmss.id
+        time_grain         = "PT1M"
+        statistic          = "Average"
+        time_window        = "PT5M"
+        time_aggregation   = "Average"
+        operator           = "LessThan"
+        threshold          = 10
+      }
+
+      scale_action {
+        direction = "Decrease"
+        type      = "ChangeCount"
+        value     = "1"
+        cooldown  = "PT1M"
+      }
+    }
+  }
+
+  notification {
+    email {
+      send_to_subscription_administrator    = true
+      send_to_subscription_co_administrator = true
+      custom_emails                         = ["${var.adminmail}"]
+    }
   }
 }
 
