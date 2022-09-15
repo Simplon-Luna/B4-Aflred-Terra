@@ -286,7 +286,7 @@ resource "azurerm_virtual_machine_scale_set" "scaleset" {
 
   os_profile {
     computer_name_prefix = "testvm"
-    admin_username       = "myadmin"
+    admin_username       = "wonderwomen"
   }
 
   os_profile_linux_config {
@@ -308,6 +308,22 @@ resource "azurerm_virtual_machine_scale_set" "scaleset" {
       subnet_id = azurerm_subnet.subnet_app.id
     }
   }
+  os_disk {
+    name                 = "${var.prefix}disk_app"
+    caching              = "ReadWrite"
+    storage_account_type = "Premium_LRS"
+  }
+
+  source_image_reference {
+    publisher = "Debian"
+    offer     = "debian-11"
+    sku       = "11"
+    version   = "latest"
+   }
+
+  custom_data                     = data.cloudinit_config.cloud-init.rendered
+  admin_username                  = "wonderwomen"
+  disable_password_authentication = true
 
 #*#*#   storage_profile_os_disk {
 #*#*#     name           = "osDiskProfile"
