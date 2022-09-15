@@ -309,7 +309,7 @@ resource "azurerm_linux_virtual_machine_scale_set" "scalevmss" {
   }
 
   lifecycle {
-    ignore_changes = ["instances"]
+    ignore_changes = [instances]
   }
 }
 
@@ -379,7 +379,7 @@ resource "azurerm_monitor_autoscale_setting" "autoscaleset" {
     email {
       send_to_subscription_administrator    = true
       send_to_subscription_co_administrator = true
-      custom_emails                         = ["${var.adminmail}"]
+      custom_emails                         = "${var.adminmail}"
     }
   }
 }
