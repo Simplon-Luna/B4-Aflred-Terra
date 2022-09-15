@@ -299,6 +299,7 @@ resource "azurerm_linux_virtual_machine_scale_set" "scalevmss" {
   os_disk {
     caching              = "ReadWrite"
     storage_account_type = "StandardSSD_LRS"
+    custom_data          = data.cloudinit_config.cloud-init.rendered
   }
 
   source_image_reference {
@@ -416,32 +417,32 @@ resource "azurerm_monitor_autoscale_setting" "autoscaleset" {
 #*# }
 
 
-## ---- Monitoring ----
-    # Creation Monitor Action Group
-resource "azurerm_monitor_action_group" "group-monitor" {
- resource_group_name = azurerm_resource_group.rg.name
- name                = "${var.prefix}group-monitor"
- short_name          = "gm"
-}
-
-    # Creation Metric Alert
-resource "azurerm_monitor_metric_alert" "alert-vm-cpu" {
- name                = "${var.prefix}alert-vm-cpu"
- resource_group_name = azurerm_resource_group.rg.name
- scopes              = [azurerm_linux_virtual_machine_scale_set.scalevmss.id]
- description         = "VM App cpu alert"
- target_resource_type = "Microsoft.Compute/virtualMachines"
-
- criteria {
-   metric_namespace = "Microsoft.Compute/virtualMachines"
-   metric_name      = "Percentage CPU"
-   aggregation      = "Total"
-   operator         = "GreaterThan"
-   threshold        = 70
- }
-
- action {
-   action_group_id = azurerm_monitor_action_group.group-monitor.id
- }
-}
-
+#*# ## ---- Monitoring ----
+#*#     # Creation Monitor Action Group
+#*# resource "azurerm_monitor_action_group" "group-monitor" {
+#*#  resource_group_name = azurerm_resource_group.rg.name
+#*#  name                = "${var.prefix}group-monitor"
+#*#  short_name          = "gm"
+#*# }
+#*# 
+#*#     # Creation Metric Alert
+#*# resource "azurerm_monitor_metric_alert" "alert-vm-cpu" {
+#*#  name                = "${var.prefix}alert-vm-cpu"
+#*#  resource_group_name = azurerm_resource_group.rg.name
+#*#  scopes              = [azurerm_linux_virtual_machine_scale_set.scalevmss.id]
+#*#  description         = "VM App cpu alert"
+#*#  target_resource_type = "Microsoft.Compute/virtualMachines"
+#*# 
+#*#  criteria {
+#*#    metric_namespace = "Microsoft.Compute/virtualMachines"
+#*#    metric_name      = "Percentage CPU"
+#*#    aggregation      = "Total"
+#*#    operator         = "GreaterThan"
+#*#    threshold        = 70
+#*#  }
+#*# 
+#*#  action {
+#*#    action_group_id = azurerm_monitor_action_group.group-monitor.id
+#*#  }
+#*# }
+#*# 
