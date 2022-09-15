@@ -280,6 +280,7 @@ resource "azurerm_linux_virtual_machine_scale_set" "scalevmss" {
   sku                 = "Standard_F2"
   instances           = 2
   admin_username      = "wonderwomen"
+  custom_data          = data.cloudinit_config.cloud-init.rendered
 
   admin_ssh_key {
     username   = "wonderwomen"
@@ -299,7 +300,6 @@ resource "azurerm_linux_virtual_machine_scale_set" "scalevmss" {
   os_disk {
     caching              = "ReadWrite"
     storage_account_type = "StandardSSD_LRS"
-    custom_data          = data.cloudinit_config.cloud-init.rendered
   }
 
   source_image_reference {
