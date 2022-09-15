@@ -16,7 +16,7 @@ variable "ssh_keys" {
 }
 
 variable "adminmail" {
-  default = ["simplon.luna@gmail.com","simplon.lerouxdunvael@gmail.com","asawaya.ext@simplon.co","bstewart.ext@simplon.co"]
+  default = ""simplon.luna@gmail.com","simplon.lerouxdunvael@gmail.com","asawaya.ext@simplon.co","bstewart.ext@simplon.co""
 }
 
 variable "subdomain-prefix" {
