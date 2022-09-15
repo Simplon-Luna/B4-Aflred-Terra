@@ -308,36 +308,24 @@ resource "azurerm_virtual_machine_scale_set" "scaleset" {
       subnet_id = azurerm_subnet.subnet_app.id
     }
   }
-  os_disk {
-    name                 = "${var.prefix}disk_app"
-    caching              = "ReadWrite"
-    storage_account_type = "Premium_LRS"
-  }
-
-  source_image_reference {
-    publisher = "Debian"
-    offer     = "debian-11"
-    sku       = "11"
-    version   = "latest"
-   }
-
+  
   custom_data                     = data.cloudinit_config.cloud-init.rendered
   admin_username                  = "wonderwomen"
   disable_password_authentication = true
 
-#*#*#   storage_profile_os_disk {
-#*#*#     name           = "osDiskProfile"
-#*#*#     caching        = "ReadWrite"
-#*#*#     create_option  = "FromImage"
-#*#*#     vhd_containers = ["${azurerm_storage_account.st_account.primary_blob_endpoint}${azurerm_storage_container.st_container.name}"]
-#*#*#   }
-#*#*# 
-#*#*#   storage_profile_image_reference {
-#*#*#     publisher = "Canonical"
-#*#*#     offer     = "UbuntuServer"
-#*#*#     sku       = "16.04-LTS"
-#*#*#     version   = "latest"
-#*#*#   }
+  storage_profile_os_disk {
+    name           = "${var.prefix}disk_app"
+    caching        = "ReadWrite"
+    create_option  = "FromImage"
+    vhd_containers = ["${azurerm_storage_account.st_account.primary_blob_endpoint}${azurerm_storage_container.st_container.name}"]
+  }
+
+  storage_profile_image_reference {
+    publisher = "Debian"
+    offer     = "debian-11"
+    sku       = "11"
+    version   = "latest"
+  }
 }
 
 #*# ## Creation VM App
