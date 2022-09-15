@@ -315,9 +315,9 @@ resource "azurerm_linux_virtual_machine_scale_set" "scalevmss" {
 
 resource "azurerm_monitor_autoscale_setting" "autoscaleset" {
   name                = "${var.prefix}AutoscaleSetting"
-  resource_group_name = azurerm_resource_group.example.name
-  location            = azurerm_resource_group.example.location
-  target_resource_id  = azurerm_linux_virtual_machine_scale_set.example.id
+  resource_group_name = azurerm_resource_group.rg.name
+  location            = azurerm_resource_group.rg.location
+  target_resource_id  = azurerm_linux_virtual_machine_scale_set.scalevmss.id
 
   profile {
     name = "defaultProfile"
@@ -428,7 +428,7 @@ resource "azurerm_monitor_action_group" "group-monitor" {
 resource "azurerm_monitor_metric_alert" "alert-vm-cpu" {
  name                = "${var.prefix}alert-vm-cpu"
  resource_group_name = azurerm_resource_group.rg.name
- scopes              = [azurerm_virtual_machine_scale_set.scaleset.id]
+ scopes              = [azurerm_linux_virtual_machine_scale_set.scalevmss.id]
  description         = "VM App cpu alert"
  target_resource_type = "Microsoft.Compute/virtualMachines"
 
