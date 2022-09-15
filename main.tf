@@ -309,19 +309,19 @@ resource "azurerm_virtual_machine_scale_set" "scaleset" {
     }
   }
 
-  storage_profile_os_disk {
-    name           = "osDiskProfile"
-    caching        = "ReadWrite"
-    create_option  = "FromImage"
-    vhd_containers = ["${azurerm_storage_account.st_account.primary_blob_endpoint}${azurerm_storage_container.st_container.name}"]
-  }
-
-  storage_profile_image_reference {
-    publisher = "Canonical"
-    offer     = "UbuntuServer"
-    sku       = "16.04-LTS"
-    version   = "latest"
-  }
+#*#*#   storage_profile_os_disk {
+#*#*#     name           = "osDiskProfile"
+#*#*#     caching        = "ReadWrite"
+#*#*#     create_option  = "FromImage"
+#*#*#     vhd_containers = ["${azurerm_storage_account.st_account.primary_blob_endpoint}${azurerm_storage_container.st_container.name}"]
+#*#*#   }
+#*#*# 
+#*#*#   storage_profile_image_reference {
+#*#*#     publisher = "Canonical"
+#*#*#     offer     = "UbuntuServer"
+#*#*#     sku       = "16.04-LTS"
+#*#*#     version   = "latest"
+#*#*#   }
 }
 
 #*# ## Creation VM App
