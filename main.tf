@@ -189,15 +189,15 @@ resource "azurerm_bastion_host" "bastion" {
   }
 }
 
-#**# ## VM
-#**#     # Creation VM Subnet
-#**# resource "azurerm_subnet" "subnet_app" {
-#**#   name                 = "${var.prefix}subnet_app"
-#**#   resource_group_name  = azurerm_resource_group.rg.name
-#**#   virtual_network_name = azurerm_virtual_network.network.name
-#**#   address_prefixes     = ["10.0.2.0/24"]
-#**# }
-#**# 
+## VM
+    # Creation VM Subnet
+resource "azurerm_subnet" "subnet_app" {
+  name                 = "${var.prefix}subnet_app"
+  resource_group_name  = azurerm_resource_group.rg.name
+  virtual_network_name = azurerm_virtual_network.network.name
+  address_prefixes     = ["10.0.2.0/24"]
+}
+ 
     # Creation Nic App
 resource "azurerm_network_interface" "nic_app" {
   name                = "${var.prefix}nic_app"
