@@ -11,5 +11,4 @@ do
     sleep 0.2
 
 done
-
-## seq 100 | parallel --max-args 0 --jobs 10 " curl -F 'vote=Cats' http://votingapp-b4g4ld-rg.eastus.cloudapp.azure.com/"
+ ## seq 100 | parallel --max-args 0 --jobs 10 " curl -F 'vote=Cats' http://votingapp-b4g4ld-rg.eastus.cloudapp.azure.com/"
