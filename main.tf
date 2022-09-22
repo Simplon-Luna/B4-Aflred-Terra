@@ -324,7 +324,7 @@ resource "azurerm_monitor_autoscale_setting" "autoscaleset" {
   profile {
     name = "defaultProfile"
 
-    capacity {
+     capacity {
       default = 1
       minimum = 1
       maximum = 10
@@ -336,7 +336,7 @@ resource "azurerm_monitor_autoscale_setting" "autoscaleset" {
         metric_resource_id = azurerm_linux_virtual_machine_scale_set.scalevmss.id
         time_grain         = "PT1M"
         statistic          = "Average"
-        time_window        = "PT5M"
+        time_window        = "PT1M"
         time_aggregation   = "Average"
         operator           = "GreaterThan"
         threshold          = 75
@@ -362,7 +362,7 @@ resource "azurerm_monitor_autoscale_setting" "autoscaleset" {
         metric_resource_id = azurerm_linux_virtual_machine_scale_set.scalevmss.id
         time_grain         = "PT1M"
         statistic          = "Average"
-        time_window        = "PT5M"
+        time_window        = "PT1M"
         time_aggregation   = "Average"
         operator           = "LessThan"
         threshold          = 10
